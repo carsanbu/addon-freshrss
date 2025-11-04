@@ -6,18 +6,18 @@
 # ==============================================================================
 
 # Setup data directory
-if ! bashio::fs.directory_exists "/data/freshrss"; then
+if ! bashio::fs.directory_exists "/config/data"; then
     bashio::log.debug 'Data directory not initialized, doing that now...'
 
     # Setup structure
-    cp -R /usr/share/freshrss/data /data/freshrss
-    chown nginx:nginx -R /data/freshrss
+    cp -R /usr/share/freshrss/data /config/data
+    chown nginx:nginx -R /config/data
 fi
 
 # Set base URL
 bashio::log.debug "base_url value: '$(bashio::config 'base_url')'"
 
-if ! bashio::fs.file_exists "/data/freshrss/config.php"; then
+if ! bashio::fs.file_exists "/config/data/config.php"; then
     bashio::log.debug 'Config file not found. Using default config.'
     bashio::log.debug 'Before modification of /usr/share/freshrss/config.default.php:'
     bashio::log.debug "$(grep base_url /usr/share/freshrss/config.default.php)"
@@ -29,14 +29,14 @@ if ! bashio::fs.file_exists "/data/freshrss/config.php"; then
     bashio::log.debug "$(grep base_url /usr/share/freshrss/config.default.php)"
 else
     bashio::log.debug 'Config file found. Using existing config.'
-    bashio::log.debug 'Before modification of /data/freshrss/config.php:'
-    bashio::log.debug "$(grep base_url /data/freshrss/config.php)"
+    bashio::log.debug 'Before modification of /config/data/config.php:'
+    bashio::log.debug "$(grep base_url /config/data/config.php)"
 
     bashio::log.debug 'Setting URL in existing config file...'
-    sed -i -E "s|('base_url'\s*=>\s*)'[^']*'|\1'$(bashio::config 'base_url')'|" /data/freshrss/config.php
+    sed -i -E "s|('base_url'\s*=>\s*)'[^']*'|\1'$(bashio::config 'base_url')'|" /config/data/config.php
 
-    bashio::log.debug 'After modification of /data/freshrss/config.php:'
-    bashio::log.debug "$(grep base_url /data/freshrss/config.php)"
+    bashio::log.debug 'After modification of /config/data/config.php:'
+    bashio::log.debug "$(grep base_url /config/data/config.php)"
 fi
 
 # Ensure /config/extensions exists
